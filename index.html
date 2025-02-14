@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Background with Buttons</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #333;
+        }
+
+        .button-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .button-container a {
+            display: inline-block;
+            margin: 10px;
+            width: 150px;
+            height: 150px;
+            background-size: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .button-container a:hover {
+            transform: scale(1.1);
+        }
+
+        .button1 {
+            background-image: url('https://yt3.googleusercontent.com/ytc/AIdro_mk_4WY7u7fz7neaAA9aj1wAKLpbxEAtLziiVa18UBTPw=s160-c-k-c0x00ffffff-no-rj');
+        }
+
+        .button2 {
+            background-image: url('https://cdn2.iconfinder.com/data/icons/weather-flat-14/64/weather02-512.png');
+        }
+
+        .button3 {
+            background-image: url('https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678116-calendar-512.png');
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <a href="anc.html" class="button1"></a>
+        <a href="wat.html" class="button2"></a>
+        <a href="d&t.html" class="button3"></a>
+    </div>
+
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        const dots = [];
+
+        function resizeCanvas() {
+            canvas.width = width = window.innerWidth;
+            canvas.height = height = window.innerHeight;
+        }
+
+        class Dot {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = Math.random() * 2 - 1;
+                this.vy = Math.random() * 2 - 1;
+            }
+
+            move() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = Math.random() * 2 - 1;
+                    this.vy = Math.random() * 2 - 1;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+            }
+
+            connect(dots) {
+                for (const dot of dots) {
+                    const dx = dot.x - this.x;
+                    const dy = dot.y - this.y;
+                    const distance = Math.sqrt(dx * dy + dy * dy);
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(this.x, this.y);
+                        ctx.lineTo(dot.x, dot.y);
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                dots.push(new Dot(x, y));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (const dot of dots) {
+                dot.move();
+                dot.draw();
+                dot.connect(dots);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        init();
+        animate();
+    </script>
+</body>
+</html>
