@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flying Stars with Clock</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .star {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: fly 10s linear infinite;
+        }
+
+        @keyframes fly {
+            from {
+                transform: translateY(0) translateX(0);
+            }
+            to {
+                transform: translateY(calc(100vh - 10px)) translateX(calc(100vw - 10px));
+            }
+        }
+
+        .clock {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .analog-clock {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            margin: auto;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        .hand {
+            position: absolute;
+            width: 50%;
+            height: 2px;
+            background-color: #ffffff;
+            transform-origin: 100%;
+            top: 50%;
+            left: 50%;
+        }
+
+        .date {
+            margin-top: 10px;
+            font-size: 20px;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div class="analog-clock" id="analog-clock">
+            <div class="hand hour" id="hour-hand"></div>
+            <div class="hand minute" id="minute-hand"></div>
+            <div class="hand second" id="second-hand"></div>
+        </div>
+        <div class="date" id="date"></div>
+    </div>
+    <script>
+        const numberOfStars = 100;
+        for (let i = 0; i < numberOfStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.animationDuration = Math.random() * 10 + 5 + 's';
+            document.body.appendChild(star);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const options = { timeZone: 'America/Chicago', hour12: false };
+            const localTime = new Intl.DateTimeFormat('en-US', options).format(now);
+            const currentTime = new Date(localTime);
+
+            const hour = currentTime.getUTCHours();
+            const minute = currentTime.getUTCMinutes();
+            const second = currentTime.getUTCSeconds();
+            const millisecond = currentTime.getUTCMilliseconds();
+
+            const hourHand = document.getElementById('hour-hand');
+            const minuteHand = document.getElementById('minute-hand');
+            const secondHand = document.getElementById('second-hand');
+
+            hourHand.style.transform = `rotate(${(hour % 12) * 30 + minute / 2}deg)`;
+            minuteHand.style.transform = `rotate(${minute * 6 + second / 10}deg)`;
+            secondHand.style.transform = `rotate(${second * 6 + millisecond * 0.006}deg)`;
+
+            requestAnimationFrame(updateClock);
+        }
+
+        function updateDate() {
+            const now = new Date();
+            const options = { timeZone: 'America/Chicago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+            const dateElement = document.getElementById('date');
+            dateElement.style.opacity = 0;
+            setTimeout(() => {
+                dateElement.innerHTML = formattedDate;
+                dateElement.style.opacity = 1;
+            }, 1000);
+
+            setTimeout(updateDate, 86400000);
+        }
+
+        updateClock();
+        updateDate();
+    </script>
+</body>
+</html>
