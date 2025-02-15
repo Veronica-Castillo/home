@@ -37,6 +37,9 @@
 
       try {
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const data = await response.json();
         const temp = data.main.temp;
         const weather = data.weather[0].main.toLowerCase();
@@ -82,3 +85,4 @@
   </script>
 </body>
 </html>
+
