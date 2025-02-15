@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flying Stars with Clock</title>
+    <title>Flying Stars with Digital Clock</title>
     <style>
         body {
             margin: 0;
@@ -40,12 +40,12 @@
         }
 
         .digital-clock {
-            font-size: 24px;
+            font-size: 36px;
             margin-bottom: 10px;
         }
 
         .date {
-            font-size: 20px;
+            font-size: 24px;
             opacity: 1;
             transition: opacity 1s ease-in-out;
         }
@@ -72,7 +72,7 @@
 </head>
 <body>
     <div class="clock">
-        <div class="digital-clock" id="digital-clock">[HOUR, MINUTES, SECONDS, MILLISECONDS]</div>
+        <div class="digital-clock" id="digital-clock">[HOUR, MINUTES, SECONDS]</div>
         <div class="date" id="date"></div>
     </div>
     <div class="message-box" id="message-box">SCHOOL OVER, LET'S GO HOME</div>
@@ -96,10 +96,9 @@
             const hour = String(currentTime.getHours()).padStart(2, '0');
             const minute = String(currentTime.getMinutes()).padStart(2, '0');
             const second = String(currentTime.getSeconds()).padStart(2, '0');
-            const millisecond = String(currentTime.getMilliseconds()).padStart(3, '0');
 
             const digitalClock = document.getElementById('digital-clock');
-            digitalClock.textContent = `[${hour}, ${minute}, ${second}, ${millisecond}]`;
+            digitalClock.textContent = `[${hour}, ${minute}, ${second}]`;
 
             if (currentTime.getDay() >= 1 && currentTime.getDay() <= 5 && hour === '16' && minute === '10' && second === '00') {
                 celebrate();
@@ -138,5 +137,6 @@
     </script>
 </body>
 </html>
+
 
 
