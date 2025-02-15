@@ -40,7 +40,7 @@
       try {
         let temperatureText = '';
         for (let location of locations) {
-          const url = `https://api.openweathermap.org/data/3.0/onecall?lat=32.7767&lon=-96.7970&exclude=minutely,hourly,alerts&units=imperial&appid=1e570b3083a1cb962d3b3d79b2e49c24`;
+          const url = `https://api.openweathermap.org/data/3.0/onecall?lat=32.7767&lon=-96.7970&exclude=minutely,hourly,alerts&units=imperial&appid=${1e570b3083a1cb962d3b3d79b2e49c24}`;
 
           console.log(`Fetching weather data for ${location.name} from: ${url}`);
 
