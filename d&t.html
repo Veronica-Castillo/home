@@ -39,23 +39,108 @@
             text-align: center;
         }
 
-        .digital-clock {
-            font-size: 24px;
-            margin-bottom: 10px;
+        .analog-clock {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin: auto;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        .hand {
+            position: absolute;
+            width: 50%;
+            height: 2px;
+            background-color: #ffffff;
+            transform-origin: 100%;
+            top: 50%;
+            left: 50%;
+        }
+
+        .hour-hand {
+            width: 30%;
+        }
+
+        .minute-hand {
+            width: 45%;
+        }
+
+        .second-hand {
+            width: 50%;
         }
 
         .date {
+            margin-top: 10px;
             font-size: 20px;
             opacity: 1;
             transition: opacity 1s ease-in-out;
         }
+
+        .message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #000000;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            text-align: center;
+            font-size: 24px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        audio {
+            display: none;
+        }
+
+        .number {
+            position: absolute;
+            font-size: 16px;
+            color: #ffffff;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Positions for clock numbers */
+        .num1 { top: 10%; left: 50%; }
+        .num2 { top: 25%; left: 75%; }
+        .num3 { top: 50%; left: 90%; }
+        .num4 { top: 75%; left: 75%; }
+        .num5 { top: 90%; left: 50%; }
+        .num6 { top: 75%; left: 25%; }
+        .num7 { top: 50%; left: 10%; }
+        .num8 { top: 25%; left: 25%; }
+        .num9 { top: 10%; left: 50%; }
+        .num10 { top: 25%; left: 75%; }
+        .num11 { top: 50%; left: 90%; }
+        .num12 { top: 10%; left: 50%; }
     </style>
 </head>
 <body>
     <div class="clock">
-        <div class="digital-clock" id="digital-clock">[HOUR, MINUTES, SECONDS, MILLISECONDS]</div>
+        <div class="analog-clock" id="analog-clock">
+            <div class="hand hour" id="hour-hand"></div>
+            <div class="hand minute" id="minute-hand"></div>
+            <div class="hand second" id="second-hand"></div>
+            <div class="number num1">1</div>
+            <div class="number num2">2</div>
+            <div class="number num3">3</div>
+            <div class="number num4">4</div>
+            <div class="number num5">5</div>
+            <div class="number num6">6</div>
+            <div class="number num7">7</div>
+            <div class="number num8">8</div>
+            <div class="number num9">9</div>
+            <div class="number num10">10</div>
+            <div class="number num11">11</div>
+            <div class="number num12">12</div>
+        </div>
         <div class="date" id="date"></div>
     </div>
+    <div class="message-box" id="message-box">SCHOOL OVER, LET'S GO HOME</div>
+    <audio id="celebration-sound" src="celebration.mp3" type="audio/mpeg"></audio>
     <script>
         const numberOfStars = 100;
         for (let i = 0; i < numberOfStars; i++) {
@@ -70,16 +155,24 @@
         function updateClock() {
             const now = new Date();
             const options = { timeZone: 'America/Chicago', hour12: false };
-            const localTime = new Intl.DateTimeFormat('en-US', options).format(now);
-            const currentTime = new Date(localTime);
+            const currentTime = new Date(new Intl.DateTimeFormat('en-US', options).format(now));
 
-            const hour = String(currentTime.getUTCHours()).padStart(2, '0');
-            const minute = String(currentTime.getUTCMinutes()).padStart(2, '0');
-            const second = String(currentTime.getUTCSeconds()).padStart(2, '0');
-            const millisecond = String(currentTime.getUTCMilliseconds()).padStart(3, '0');
+            const hour = currentTime.getHours();
+            const minute = currentTime.getMinutes();
+            const second = currentTime.getSeconds();
+            const millisecond = currentTime.getMilliseconds();
 
-            const digitalClock = document.getElementById('digital-clock');
-            digitalClock.textContent = `[${hour}, ${minute}, ${second}, ${millisecond}]`;
+            const hourHand = document.getElementById('hour-hand');
+            const minuteHand = document.getElementById('minute-hand');
+            const secondHand = document.getElementById('second-hand');
+
+            hourHand.style.transform = `rotate(${(hour % 12) * 30 + minute / 2}deg)`;
+            minuteHand.style.transform = `rotate(${minute * 6 + second / 10}deg)`;
+            secondHand.style.transform = `rotate(${second * 6 + millisecond * 0.006}deg)`;
+
+            if (currentTime.getDay() >= 1 && currentTime.getDay() <= 5 && hour === 16 && minute === 10 && second === 0) {
+                celebrate();
+            }
 
             requestAnimationFrame(updateClock);
         }
@@ -98,8 +191,20 @@
             setTimeout(updateDate, 86400000);
         }
 
+        function celebrate() {
+            const messageBox = document.getElementById('message-box');
+            const celebrationSound = document.getElementById('celebration-sound');
+            messageBox.style.opacity = 1;
+            celebrationSound.play();
+
+            setTimeout(() => {
+                messageBox.style.opacity = 0;
+            }, 4000);
+        }
+
         updateClock();
         updateDate();
     </script>
 </body>
 </html>
+
