@@ -90,13 +90,13 @@
 
         function updateClock() {
             const now = new Date();
-            const options = { timeZone: 'America/Chicago', hour12: true };
+            const options = { timeZone: 'America/Chicago', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
             const currentTime = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
             let hour, minute, second, ampm;
             currentTime.forEach(part => {
-                if (part.type === 'hour') hour = part.value.padStart(2, '0');
-                if (part.type === 'minute') minute = part.value.padStart(2, '0');
-                if (part.type === 'second') second = part.value.padStart(2, '0');
+                if (part.type === 'hour') hour = part.value;
+                if (part.type === 'minute') minute = part.value;
+                if (part.type === 'second') second = part.value;
                 if (part.type === 'dayPeriod') ampm = part.value;
             });
 
