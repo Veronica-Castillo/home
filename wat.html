@@ -32,53 +32,67 @@
   <script>
     async function fetchWeather() {
       const apiKey = '1e570b3083a1cb962d3b3d79b2e49c24';
-      const lat = 32.7767;
-      const lon = -96.7970;
-      const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=imperial&appid=${apiKey}`;
+      const locations = [
+        { name: 'Dallas', lat: 32.7767, lon: -96.7970 },
+        { name: 'Arlington', lat: 32.7357, lon: -97.1081 }
+      ];
 
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        let temperatureText = '';
+        for (let location of locations) {
+          const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${location.lat}&lon=${location.lon}&exclude=minutely,hourly,alerts&units=imperial&appid=${apiKey}`;
+
+          console.log('Fetching weather data from:', url);
+
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log('Weather data:', data);
+
+          const temp = data.current.temp;
+          const weather = data.current.weather[0].main.toLowerCase();
+          temperatureText += `${location.name} Temperature: ${temp}°F\n`;
+
+          let emoji;
+          switch (weather) {
+            case 'clear':
+              emoji = '☀️';
+              break;
+            case 'clouds':
+              emoji = '☁️';
+              break;
+            case 'rain':
+              emoji = '🌧️';
+              break;
+            case 'snow':
+              emoji = '❄️';
+              break;
+            case 'thunderstorm':
+              emoji = '⛈️';
+              break;
+            case 'drizzle':
+              emoji = '🌦️';
+              break;
+            case 'mist':
+            case 'fog':
+              emoji = '🌫️';
+              break;
+            default:
+              emoji = '🌤️';
+          }
+
+          if (location.name === 'Dallas') {
+            document.getElementById('weather-emoji').innerText = emoji;
+          }
         }
-        const data = await response.json();
-        const temp = data.current.temp;
-        const weather = data.current.weather[0].main.toLowerCase();
 
-        document.getElementById('temperature').innerText = `Current Temperature: ${temp}°F`;
-
-        let emoji;
-        switch (weather) {
-          case 'clear':
-            emoji = '☀️';
-            break;
-          case 'clouds':
-            emoji = '☁️';
-            break;
-          case 'rain':
-            emoji = '🌧️';
-            break;
-          case 'snow':
-            emoji = '❄️';
-            break;
-          case 'thunderstorm':
-            emoji = '⛈️';
-            break;
-          case 'drizzle':
-            emoji = '🌦️';
-            break;
-          case 'mist':
-          case 'fog':
-            emoji = '🌫️';
-            break;
-          default:
-            emoji = '🌤️';
-        }
-
-        document.getElementById('weather-emoji').innerText = emoji;
+        document.getElementById('temperature').innerText = temperatureText;
       } catch (error) {
         console.error('Error fetching weather data:', error);
         document.getElementById('temperature').innerText = 'Unable to fetch weather data';
+        document.getElementById('temperature').innerText += ` (Error: ${error.message})`;
       }
     }
 
@@ -86,5 +100,3 @@
   </script>
 </body>
 </html>
-
-
