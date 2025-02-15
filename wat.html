@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Page</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      text-align: center;
+    }
+    .temperature {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .weather-emoji {
+      font-size: 5em;
+    }
+  </style>
+</head>
+<body>
+  <div class="temperature" id="temperature">Loading...</div>
+  <div class="weather-emoji" id="weather-emoji">🌤️</div>
+
+  <script>
+    async function fetchWeather() {
+      const apiKey = 'YOUR_API_KEY';
+      const city = 'Dallas';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const temp = data.main.temp;
+        const weather = data.weather[0].main.toLowerCase();
+
+        document.getElementById('temperature').innerText = `Current Temperature: ${temp}°F`;
+
+        let emoji;
+        switch (weather) {
+          case 'clear':
+            emoji = '☀️';
+            break;
+          case 'clouds':
+            emoji = '☁️';
+            break;
+          case 'rain':
+            emoji = '🌧️';
+            break;
+          case 'snow':
+            emoji = '❄️';
+            break;
+          case 'thunderstorm':
+            emoji = '⛈️';
+            break;
+          case 'drizzle':
+            emoji = '🌦️';
+            break;
+          case 'mist':
+          case 'fog':
+            emoji = '🌫️';
+            break;
+          default:
+            emoji = '🌤️';
+        }
+
+        document.getElementById('weather-emoji').innerText = emoji;
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+        document.getElementById('temperature').innerText = 'Unable to fetch weather data';
+      }
+    }
+
+    fetchWeather();
+  </script>
+</body>
+</html>
