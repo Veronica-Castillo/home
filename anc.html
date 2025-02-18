@@ -1,95 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gunn Most Recents</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(180deg, lightpink, lightblue);
-      animation: fadeBackground 10s infinite;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      color: #333;
-    }
-
-    @keyframes fadeBackground {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
-    }
-
-    .warning {
-      position: absolute;
-      bottom: -50px;
-      font-size: 24px;
-      animation: floatUp 10s linear infinite;
-      opacity: 0;
-    }
-
-    @keyframes floatUp {
-      0% { bottom: -50px; opacity: 1; }
-      90% { bottom: 100vh; opacity: 1; }
-      100% { bottom: 100vh; opacity: 0; }
-    }
-
-    .message {
-      z-index: 1;
-    }
-
-    .message h1 {
-      margin: 0;
-      padding: 20px;
-      font-size: 24px;
-    }
-
-    .message p {
-      margin: 10px 0;
-      font-size: 14px;
-    }
-
-    .message .continue-button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: green;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .message .continue-button:hover {
-      background-color: darkgreen;
-    }
-  </style>
+    <title>Morning Announcements</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars */
+        }
+        #youtube-link {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10; /* Ensure it's on top */
+        }
+        #youtube-link img {
+            width: 50px; /* Adjust size as needed */
+            height: auto;
+        }
+        #player {
+            width: 100%;
+            height: 100vh; /* Make it full screen */
+        }
+    </style>
 </head>
 <body>
-  <div class="warning">⚠️</div>
-  <div class="message">
-    <h1>Just letting you know that this only sends you to the Gunn Most Recents, and not the the actual video. Ergo, you have to click the video yourself.</h1>
-    <p>(do you wish to continue?)</p>
-    <button class="continue-button" onclick="window.location.href='https://www.youtube.com/@gunnjuniorhigh8340/videos'">Continue</button>
-  </div>
-  <script>
-    function createWarningEmojis() {
-      const body = document.body;
-      for (let i = 0; i < 10; i++) {
-        const emoji = document.createElement('div');
-        emoji.innerText = '⚠️';
-        emoji.classList.add('warning');
-        emoji.style.left = `${Math.random() * 100}vw`;
-        emoji.style.animationDelay = `${Math.random() * 10}s`;
-        body.appendChild(emoji);
-      }
+
+<a href="https://www.youtube.com" id="youtube-link" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
+</a>
+
+<div id="player"></div>
+
+<script>
+    // YouTube IFrame API script
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '100%',
+            width: '100%',
+            videoId: 'b2uGDyESDfA', // Replace with your video ID
+            playerVars: {
+                'playsinline': 1,  // Required for some mobile browsers
+                'controls': 1,     // Show player controls
+                'showinfo': 0,     // Hide video title
+                'rel': 0,          // Prevent related videos
+                'fs': 1            // Enable fullscreen button
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
     }
 
-    createWarningEmojis();
-  </script>
+    function onPlayerReady(event) {
+        // You can add additional setup here if needed
+        event.target.playVideo(); // Autoplay the video, removed cause bad UX
+    }
+
+    function onPlayerStateChange(event) {
+        // You can track video state changes here if needed
+    }
+</script>
+
 </body>
 </html>
